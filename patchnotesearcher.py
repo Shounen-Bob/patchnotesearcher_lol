@@ -4,7 +4,7 @@ from colorama import init, Fore, Back, Style
 from tqdm import tqdm
 from urllib.parse import urlparse
 import sys
-
+from namechange import namechange
 
 init()
 
@@ -21,28 +21,8 @@ except FileNotFoundError:
 # ユーザーから検索キーワードを入力してもらう
 search_keyword = input('検索するキーワードを入力してください: ')
 
-# ヴォイド勢の名前を変換
-if search_keyword == "レクサイ":
-    search_keyword = "レク＝サイ"
-if search_keyword == "カイサ":
-    search_keyword = "カイ＝サ"
-if search_keyword == "カジックス":
-    search_keyword = "カ＝ジックス"    
-if search_keyword == "コグマウ":
-    search_keyword = "コグ＝マウ" 
-if search_keyword == "チョガス":
-    search_keyword = "チョ＝ガス"
-if search_keyword == "ベルヴェス":
-    search_keyword = "ベル＝ヴェス"
-if search_keyword == "ヴェルコズ":
-    search_keyword = "ヴェル＝コズ" 
-
-# 間違えやすい名前を変換
-if search_keyword == "ベルコズ":
-    search_keyword = "ヴェル＝コズ"
-if search_keyword == "マスターイー":
-    search_keyword = "マスター・イー"
-    
+# namechange.pyで必要に応じてワードを変換する
+search_keyword = namechange(search_keyword)
 
 # 各 URL に対して処理を行う
 tqdm.write(f'{search_keyword}をパッチノートから検索中')
