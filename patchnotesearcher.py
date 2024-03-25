@@ -41,10 +41,18 @@ for url in urls:
     # BeautifulSoup を使って HTML を解析
     soup = BeautifulSoup(html_content, 'html.parser')
 
+    # <time datetime=で始まるタグを探し出す
+    time_tags = soup.find_all('time', attrs={'datetime': True})
+    # datetime属性の値を取得してpatchdateに格納
+    for tag in time_tags:
+        patchdatefull = tag['datetime']
+    # datetimeの文字列の左１０ケタを取り出す
+    patchdate = patchdatefull[:10]
     # h3 と h4 タグを検索
     parsed_url = urlparse(url)
     last_path = parsed_url.path.strip('/').split('/')[-1]
     tqdm.write(last_path)
+    tqdm.write(f"{Fore.BLUE}適用日時:{patchdate}{Fore.RESET}")
     for tag in soup.find_all(['h3', 'h4']):
         if search_keyword in tag.text:
             # タグのテキストを表示
