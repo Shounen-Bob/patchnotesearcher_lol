@@ -42,6 +42,7 @@ if search_keyword == "ベルコズ":
     search_keyword = "ヴェル＝コズ"
 if search_keyword == "マスターイー":
     search_keyword = "マスター・イー"
+    
 
 # 各 URL に対して処理を行う
 tqdm.write(f'{search_keyword}をパッチノートから検索中')
