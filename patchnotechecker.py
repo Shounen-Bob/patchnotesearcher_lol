@@ -35,11 +35,17 @@ if search_keyword == "チョガス":
 if search_keyword == "ベルヴェス":
     search_keyword = "ベル＝ヴェス"
 if search_keyword == "ヴェルコズ":
-    search_keyword = "ヴェル＝コズ"        
+    search_keyword = "ヴェル＝コズ" 
+
+# 間違えやすい名前を変換
+if search_keyword == "ベルコズ":
+    search_keyword = "ヴェル＝コズ"
+if search_keyword == "マスターイー":
+    search_keyword = "マスター・イー"
 
 # 各 URL に対して処理を行う
 tqdm.write(f'{search_keyword}をパッチノートから検索中')
-progress_bar = tqdm(total=len(urls), desc='進捗', leave=False)# 進捗バーの設定
+progress_bar = tqdm(total=len(urls), desc='進捗', leave=False)# 進捗バーの設定 Falseにしているのに残り続けている気がする
 for url in urls:
     url = url.strip()  # 余分な空白や改行を削除
     try:
