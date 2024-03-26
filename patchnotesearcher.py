@@ -29,7 +29,6 @@ tqdm.write(f'{search_keyword}をパッチノートから検索中')
 progress_bar = tqdm(total=len(urls), desc='進捗', leave=False)# 進捗バーの設定 Falseにしているのに残り続けている気がする
 for url in urls:
     url = url.strip()  # 余分な空白や改行を削除
-
     try:
         # URL から HTML を取得
         response = requests.get(url, allow_redirects=True)
