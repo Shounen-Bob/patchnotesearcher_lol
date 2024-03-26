@@ -29,14 +29,18 @@ tqdm.write(f'{search_keyword}をパッチノートから検索中')
 progress_bar = tqdm(total=len(urls), desc='進捗', leave=False)# 進捗バーの設定 Falseにしているのに残り続けている気がする
 for url in urls:
     url = url.strip()  # 余分な空白や改行を削除
+
     try:
         # URL から HTML を取得
-        response = requests.get(url)
+        response = requests.get(url, allow_redirects=True)
         response.raise_for_status()  # ステータスコードが 200 以外の場合は例外を発生させる
+
         html_content = response.text
+
     except requests.RequestException as e:
-        progress_bar.update(1)  # 進捗バーを更新
-        continue  # 次の URL へ処理を移行
+        remaining_progress = len(urls) - progress_bar.n  # 残りの進捗量
+        progress_bar.update(remaining_progress)  # 進捗バーを100%に更新
+        break
 
     # BeautifulSoup を使って HTML を解析
     soup = BeautifulSoup(html_content, 'html.parser')
@@ -79,5 +83,5 @@ for url in urls:
     progress_bar.update(1)  # 進捗バーを更新
     tqdm.write('---')  # URL ごとに区切り線を表示
     
-
+tqdm.write('GG!パッチノートからの抽出が終わりました！') 
 input()
