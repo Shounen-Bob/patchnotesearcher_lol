@@ -18,11 +18,14 @@ except FileNotFoundError:
     print("起動前にpatchnote.txtにパッチノートのURLを一行ずつ記載し、同ディレクトリに格納してください。")
     sys.exit(1)  # 処理を終了させる
 
-# コマンドライン引数または標準入力から検索キーワードを取得
+# コマンドライン引数またはデフォルト値から検索キーワードを取得
 if len(sys.argv) > 1:
     search_keyword = sys.argv[1]
 else:
-    search_keyword = input("検索キーワードを入力してください: ")
+    try:
+        search_keyword = input("検索キーワードを入力してください: ")
+    except (EOFError, RuntimeError):
+        search_keyword = "デフォルトキーワード"  # デフォルトの検索キーワードを設定
 
 # namechange.pyで必要に応じてワードを変換する
 search_keyword = namechange(search_keyword)
