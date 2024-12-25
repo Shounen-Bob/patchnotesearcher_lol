@@ -16,11 +16,13 @@ try:
 except FileNotFoundError:
     print("エラー：patchnote.txtが見つかりません。")
     print("起動前にpatchnote.txtにパッチノートのURLを一行ずつ記載し、同ディレクトリに格納してください。")
-    input()
     sys.exit(1)  # 処理を終了させる
 
-# ユーザーから検索キーワードを入力してもらう
-search_keyword = input('検索するキーワードを入力してください: ')
+# コマンドライン引数または標準入力から検索キーワードを取得
+if len(sys.argv) > 1:
+    search_keyword = sys.argv[1]
+else:
+    search_keyword = input("検索キーワードを入力してください: ")
 
 # namechange.pyで必要に応じてワードを変換する
 search_keyword = namechange(search_keyword)
@@ -98,5 +100,4 @@ for result in results:
                 tqdm.write(f"        {Fore.GREEN}{item}{Fore.RESET}")
     tqdm.write("---")
 
-tqdm.write('GG!パッチノートからの抽出が終わりました！') 
-input()
+tqdm.write('GG!パッチノートからの抽出が終わりました！')
