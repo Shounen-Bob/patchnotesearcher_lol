@@ -1,1 +1,15 @@
 *.pyc
+patchnotesearcher.spec
+build/patchnotesearcher/Analysis-00.toc
+build/patchnotesearcher/base_library.zip
+build/patchnotesearcher/EXE-00.toc
+build/patchnotesearcher/patchnotesearcher.pkg
+build/patchnotesearcher/PKG-00.toc
+build/patchnotesearcher/PYZ-00.pyz
+build/patchnotesearcher/PYZ-00.toc
+build/patchnotesearcher/Tree-00.toc
+build/patchnotesearcher/Tree-01.toc
+build/patchnotesearcher/Tree-02.toc
+build/patchnotesearcher/warn-patchnotesearcher.txt
+build/patchnotesearcher/xref-patchnotesearcher.html
+dist/patchnotesearcher.exe
