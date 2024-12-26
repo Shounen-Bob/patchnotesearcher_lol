@@ -36,7 +36,13 @@ results = []
 def process_url(url):
     try:
         # URL から HTML を取得
-        response = requests.get(url, allow_redirects=True, timeout=10)
+        headers = {
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                "(KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36"
+            )
+        }
+        response = requests.get(url, headers=headers, allow_redirects=True, timeout=10)
         if response.status_code == 404:
             return None  # 404エラーの場合はスキップ
         response.raise_for_status()  # ステータスコードが 200 以外の場合は例外を発生させる
@@ -65,16 +71,44 @@ def process_url(url):
                 entry['details'] = []
                 for sibling in tag.find_next_siblings():
                     if sibling.name == 'h4':
+                        subheader = sibling.text.strip()
+                        items = []
+
+                        # 次の<ul>タグ、<li>タグ、または<p>タグの内容を取得
+                        next_tag = sibling.find_next_sibling()
+                        if next_tag and next_tag.name == 'ul':
+                            items.extend([li.get_text(separator=" ").strip() for li in next_tag.find_all('li')])
+                        while next_tag and next_tag.name in ['li', 'p']:
+                            if next_tag.name == 'li':
+                                items.append(next_tag.get_text(separator=" ").strip())
+                            elif next_tag.name == 'p':
+                                items.append(next_tag.text.strip())
+                            next_tag = next_tag.find_next_sibling()
+
                         entry['details'].append({
-                            "subheader": sibling.text.strip(),
-                            "items": [li.text.strip() for li in sibling.find_next_sibling('ul').find_all('li')] if sibling.find_next_sibling('ul') else []
+                            "subheader": subheader,
+                            "items": items
                         })
                     elif sibling.name == 'h3':
                         break
             elif tag.name == 'h4':
+                subheader = tag.text.strip()
+                items = []
+
+                # 次の<ul>タグ、<li>タグ、または<p>タグの内容を取得
+                next_tag = tag.find_next_sibling()
+                if next_tag and next_tag.name == 'ul':
+                    items.extend([li.get_text(separator=" ").strip() for li in next_tag.find_all('li')])
+                while next_tag and next_tag.name in ['li', 'p']:
+                    if next_tag.name == 'li':
+                        items.append(next_tag.get_text(separator=" ").strip())
+                    elif next_tag.name == 'p':
+                        items.append(next_tag.text.strip())
+                    next_tag = next_tag.find_next_sibling()
+
                 entry['details'] = [{
-                    "subheader": tag.text.strip(),
-                    "items": [li.text.strip() for li in tag.find_next_sibling('ul').find_all('li')] if tag.find_next_sibling('ul') else []
+                    "subheader": subheader,
+                    "items": items
                 }]
             found_entries.append(entry)
 
@@ -101,6 +135,6 @@ for result in results:
             tqdm.write(f"    {Back.BLUE}{detail['subheader']}{Back.RESET}")
             for item in detail.get('items', []):
                 tqdm.write(f"        {Fore.GREEN}{item}{Fore.RESET}")
-    tqdm.write("---")
+        tqdm.write("---")
 
 tqdm.write('GG!パッチノートからの抽出が終わりました！')
