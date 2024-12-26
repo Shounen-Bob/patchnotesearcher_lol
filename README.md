@@ -1,8 +1,6 @@
-# PatchNoteSearcher
+# パッチノート検索くん
 ![image](https://github.com/user-attachments/assets/251cbe28-34d3-481c-a7d6-e3946de1cd58)
 
-
-# パッチノート検索くん
 バージョン 1.3.3
 作者: 少年ボブ
 
