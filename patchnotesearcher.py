@@ -2,33 +2,46 @@ import requests
 from bs4 import BeautifulSoup
 from colorama import init, Fore, Back, Style
 from tqdm import tqdm
-from urllib.parse import urlparse
-import sys
 from concurrent.futures import ThreadPoolExecutor
-from namechange import namechange
 
 init()
 
-# patchnote.txt ファイルから URL を読み込む
+def namechange(search_keyword):
+    # ヴォイド勢の名前を変換
+    if search_keyword == "レクサイ":
+        return "レク＝サイ"
+    if search_keyword == "カイサ":
+        return "カイ＝サ"
+    if search_keyword == "カジックス":
+        return "カ＝ジックス"    
+    if search_keyword == "コグマウ":
+        return "コグ＝マウ" 
+    if search_keyword == "チョガス":
+        return "チョ＝ガス"
+    if search_keyword == "ベルヴェス":
+        return "ベル＝ヴェス"
+    if search_keyword == "ヴェルコズ":
+        return "ヴェル＝コズ" 
+
+    # 間違えやすい名前を変換
+    if search_keyword == "ベルコズ":
+        return "ヴェル＝コズ"
+    if search_keyword == "マスターイー":
+        return "マスター・イー"
+    return search_keyword
+
+# シーズンとキーワードの入力を求める
 try:
-    with open('patchnote.txt', 'r') as file:
-        urls = [url.strip() for url in file.readlines()]
-except FileNotFoundError:
-    print("エラー：patchnote.txtが見つかりません。")
-    print("起動前にpatchnote.txtにパッチノートのURLを一行ずつ記載し、同ディレクトリに格納してください。")
-    sys.exit(1)  # 処理を終了させる
+    season = input("シーズンの数字を入力してください（例: 14）: ").strip()
+    search_keyword = input("検索キーワードを入力してください: ").strip()
+    search_keyword = namechange(search_keyword)
+except Exception as e:
+    print(f"入力エラー: {e}")
+    exit(1)
 
-# コマンドライン引数またはデフォルト値から検索キーワードを取得
-if len(sys.argv) > 1:
-    search_keyword = sys.argv[1]
-else:
-    try:
-        search_keyword = input("検索キーワードを入力してください: ")
-    except (EOFError, RuntimeError):
-        search_keyword = "デフォルトキーワード"  # デフォルトの検索キーワードを設定
-
-# namechange.pyで必要に応じてワードを変換する
-search_keyword = namechange(search_keyword)
+# URLを生成
+base_url = "https://www.leagueoflegends.com/ja-jp/news/game-updates/"
+urls = [f"{base_url}patch-{season}-{i:02d}-notes/" for i in range(1, 25)]
 
 # 検索結果を保持するリスト
 results = []
@@ -59,8 +72,7 @@ def process_url(url):
     patchdate = time_tag['datetime'][:10] if time_tag else "不明"
 
     # パッチノート番号を取得
-    parsed_url = urlparse(url)
-    patch_number = parsed_url.path.strip('/').split('/')[-1]
+    patch_number = url.split("/")[-2]
 
     # h3 と h4 タグを検索
     found_entries = []
@@ -74,7 +86,6 @@ def process_url(url):
                         subheader = sibling.text.strip()
                         items = []
 
-                        # 次の<ul>タグ、<li>タグ、または<p>タグの内容を取得
                         next_tag = sibling.find_next_sibling()
                         if next_tag and next_tag.name == 'ul':
                             items.extend([li.get_text(separator=" ").strip() for li in next_tag.find_all('li')])
@@ -95,7 +106,6 @@ def process_url(url):
                 subheader = tag.text.strip()
                 items = []
 
-                # 次の<ul>タグ、<li>タグ、または<p>タグの内容を取得
                 next_tag = tag.find_next_sibling()
                 if next_tag and next_tag.name == 'ul':
                     items.extend([li.get_text(separator=" ").strip() for li in next_tag.find_all('li')])
